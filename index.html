@@ -22,8 +22,8 @@
     --ink:       #e8edf2;   /* Primärtext        */
     --ink-dim:   #9aa7b5;   /* Sekundärtext      */
     --ink-faint: #5e6b7a;   /* Labels / Captions */
-    --accent:    #006BB8;   /* Bernstein, Signatur */
-    --accent-dim:#7a5600;
+    --accent:    #006BB8;   /* SAP-Blau, Signatur */
+    --accent-dim:#0a3a5c;
     --good:      #3fb27f;   /* dezentes Grün      */
     --maxw: 1080px;
     --r: 14px;
@@ -128,8 +128,8 @@
     border: 1px solid transparent; cursor: pointer;
     transition: transform 0.15s, background 0.2s, border-color 0.2s;
   }
-  .btn-primary { background: var(--accent); color: #1a1200; }
-  .btn-primary:hover { transform: translateY(-2px); background: #ffb71a; }
+  .btn-primary { background: var(--accent); color: #ffffff; }
+  .btn-primary:hover { transform: translateY(-2px); background: #0a82d8; }
   .btn-ghost { border-color: var(--line); color: var(--ink); background: var(--surface); }
   .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
 
@@ -153,7 +153,7 @@
   .kv:last-child { border-bottom: none; }
   .kv .k { color: var(--ink-faint); }
   .kv .v { color: var(--ink); font-weight: 600; }
-  .kv .v.amber { color: var(--accent); }
+  .kv .v.hl { color: var(--accent); }
   .kv .v.green { color: var(--good); }
 
   /* ============================================================ SECTION SHELL */
@@ -203,7 +203,7 @@
     width: 11px; height: 11px; border-radius: 50%;
     background: var(--bg); border: 2px solid var(--accent);
   }
-  .tl-item.now::before { background: var(--accent); box-shadow: 0 0 0 4px rgba(240,165,0,0.15); }
+  .tl-item.now::before { background: var(--accent); box-shadow: 0 0 0 4px rgba(0,107,184,0.15); }
   .tl-date { font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--accent); letter-spacing: 0.04em; }
   .tl-role { font-weight: 600; font-size: 16px; margin: 4px 0 2px; }
   .tl-org { color: var(--ink-faint); font-size: 13px; margin-bottom: 8px; }
@@ -214,7 +214,7 @@
   /* ============================================================ AI PLACEHOLDER */
   .placeholder {
     border: 1px dashed var(--accent-dim);
-    background: linear-gradient(180deg, rgba(240,165,0,0.05), transparent);
+    background: linear-gradient(180deg, rgba(0,107,184,0.05), transparent);
     border-radius: var(--r); padding: 28px;
   }
   .placeholder .tag {
@@ -225,6 +225,66 @@
   .placeholder p { color: var(--ink-dim); font-size: 14.5px; max-width: 64ch; }
   .placeholder ul { margin: 14px 0 0 18px; color: var(--ink-dim); font-size: 14px; }
   .placeholder li { margin-bottom: 6px; }
+
+  /* ============================================================ ZERTIFIKATE */
+  .cert-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  @media (max-width: 800px) { .cert-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 520px) { .cert-grid { grid-template-columns: 1fr; } }
+
+  .cert {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--r); overflow: hidden; cursor: pointer;
+    text-align: left; color: inherit; font: inherit;
+    display: flex; flex-direction: column;
+    transition: border-color 0.25s, transform 0.25s;
+  }
+  .cert:hover { border-color: var(--accent); transform: translateY(-3px); }
+  .cert-thumb {
+    aspect-ratio: 4 / 3; background: var(--surface-2);
+    display: flex; align-items: center; justify-content: center;
+    border-bottom: 1px solid var(--line); position: relative;
+  }
+  .cert-thumb svg { width: 46px; height: 46px; color: var(--accent); opacity: 0.85; }
+  .cert-thumb .ext {
+    position: absolute; bottom: 10px; right: 10px;
+    font-family: "JetBrains Mono", monospace; font-size: 10px;
+    letter-spacing: 0.1em; color: var(--ink-faint);
+    border: 1px solid var(--line); border-radius: 5px; padding: 2px 6px;
+  }
+  .cert-meta { padding: 16px 18px; }
+  .cert-meta .ct { font-weight: 600; font-size: 15px; line-height: 1.3; }
+  .cert-meta .ci { color: var(--ink-faint); font-size: 13px; margin-top: 5px; }
+  .cert-open {
+    margin-top: 10px; font-family: "JetBrains Mono", monospace;
+    font-size: 11.5px; color: var(--accent); letter-spacing: 0.05em;
+  }
+
+  /* Lightbox */
+  .lb {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(6,9,13,0.92); backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center; padding: 24px;
+  }
+  .lb.open { display: flex; }
+  .lb-inner {
+    width: min(900px, 100%); height: min(85vh, 100%);
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--r); overflow: hidden; display: flex; flex-direction: column;
+  }
+  .lb-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--surface-2);
+  }
+  .lb-bar .t { font-size: 14px; font-weight: 600; }
+  .lb-bar .x {
+    background: none; border: 1px solid var(--line); color: var(--ink);
+    width: 30px; height: 30px; border-radius: 7px; cursor: pointer; font-size: 16px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .lb-bar .x:hover { border-color: var(--accent); color: var(--accent); }
+  .lb-inner iframe { flex: 1; width: 100%; border: none; background: #fff; }
+  .lb-fallback { padding: 10px 16px; font-size: 12.5px; color: var(--ink-faint); border-top: 1px solid var(--line); }
+  .lb-fallback a { color: var(--accent); }
 
   /* ============================================================ SKILLS */
   .skill-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
@@ -274,7 +334,7 @@
       <a href="#bruecke">Warum SAP</a>
       <a href="#mapping">Eignung</a>
       <a href="#weg">Werdegang</a>
-      <a href="#ki">KI-Praxis</a>
+      <a href="#ki">Zertifikate</a>
       <a href="#kontakt">Kontakt</a>
     </div>
   </div>
@@ -295,15 +355,15 @@
       <div class="console fade">
         <div class="console-bar">
           <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-          <span class="label mono">candidate_profile.json</span>
+          <span class="label mono">profil_kurzueberblick</span>
         </div>
         <div class="console-body">
-          <div class="kv"><span class="k mono">Zielrolle</span><span class="v amber">Solution Advisor</span></div>
-          <div class="kv"><span class="k mono">Studium</span><span class="v">Wirtschaftschemie M.Sc.</span></div>
-          <div class="kv"><span class="k mono">Hintergrund</span><span class="v">Aftersales · Market Dev.</span></div>
-          <div class="kv"><span class="k mono">IT-Kenntnisse</span><span class="v">Power BI · SQL · Python</span></div>
-          <div class="kv"><span class="k mono">Sprachen</span><span class="v">DE (native) · EN (C1)</span></div>
-          <div class="kv"><span class="k mono">Status</span><span class="v green">● verfügbar ab 10/2026</span></div>
+          <div class="kv"><span class="k mono">Zielposition</span><span class="v hl">Solution Advisor</span></div>
+          <div class="kv"><span class="k mono">Abschluss</span><span class="v">M.Sc. Wirtschaftschemie</span></div>
+          <div class="kv"><span class="k mono">Schwerpunkt</span><span class="v">Aftersales · Market Development</span></div>
+          <div class="kv"><span class="k mono">Daten &amp; Tools</span><span class="v">Power BI · SQL · Python</span></div>
+          <div class="kv"><span class="k mono">Sprachen</span><span class="v">Deutsch · Englisch (C1)</span></div>
+          <div class="kv"><span class="k mono">Verfügbarkeit</span><span class="v green">● ab 02/2027</span></div>
         </div>
       </div>
     </div>
@@ -424,27 +484,77 @@
   </div>
 </section>
 
-<!-- ============================ KI-PRAXIS (PLATZHALTER) ============================ -->
+<!-- ============================ KI-ZERTIFIKATE ============================ -->
 <section id="ki">
   <div class="wrap">
     <div class="sec-head fade">
-      <span class="eyebrow">KI in der Praxis</span>
-      <h2>Geschäftsprobleme, die ich mit KI gelöst habe.</h2>
-      <p>Die Ausschreibung legt besonderen Wert auf KI-Anwendung. Hier zeige ich konkret, wofür ich generative KI im Arbeitsalltag eingesetzt habe.</p>
+      <span class="eyebrow">Zertifikate</span>
+      <h2>Belegtes KI-Fundament.</h2>
+      <p>Die Ausschreibung legt besonderen Wert auf KI-Kompetenz. Diese Qualifikationen habe ich bereits erworben — Porsche-interne Zertifikate und KI-Workshops. Klick auf eine Karte, um das Zertifikat zu öffnen.</p>
     </div>
-    <div class="placeholder fade">
-      <span class="tag">▌ Von Adrian zu füllen</span>
-      <h3>Deine echten KI-Anwendungsfälle bei Porsche</h3>
-      <p>Trag hier 2–3 konkrete Beispiele ein, bei denen du KI eingesetzt hast — je spezifischer, desto glaubwürdiger im Interview. Orientierung:</p>
-      <ul>
-        <li>Welches Problem gab es? (z.&nbsp;B. manuelle, fehleranfällige Reporting-Schritte)</li>
-        <li>Welches KI-Tool / welchen Ansatz hast du genutzt?</li>
-        <li>Was war das messbare Ergebnis? (Zeitersparnis, Qualität, schnellere Analyse)</li>
-      </ul>
-      <p style="margin-top:14px;">→ Gib mir diese Stichpunkte, dann formuliere ich sie passend zur SAP-Sprache aus (AI Adoption Mindset, Agentic AI, Context Engineering).</p>
+    <div class="cert-grid">
+
+      <!-- ====== ZERTIFIKAT 1 ======
+           ▌ Von Adrian zu füllen:
+           - data-file:  Dateiname des PDFs, EXAKT wie hochgeladen (z. B. "zertifikate/ki-grundlagen.pdf")
+           - .ct:        Titel des Zertifikats
+           - .ci:        Aussteller / Datum                                   -->
+      <button class="cert fade" data-file="zertifikate/zertifikat-1.pdf" data-title="Zertifikat 1">
+        <div class="cert-thumb">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.4 5 5.6.6-4 4 1 5.4L12 19l-5 3 1-5.4-4-4 5.6-.6z"/></svg>
+          <span class="ext">PDF</span>
+        </div>
+        <div class="cert-meta">
+          <div class="ct">Titel des Zertifikats</div>
+          <div class="ci">Aussteller · Jahr</div>
+          <div class="cert-open mono">▸ öffnen</div>
+        </div>
+      </button>
+
+      <!-- ====== ZERTIFIKAT 2 ====== -->
+      <button class="cert fade" data-file="zertifikate/zertifikat-2.pdf" data-title="Zertifikat 2">
+        <div class="cert-thumb">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.4 5 5.6.6-4 4 1 5.4L12 19l-5 3 1-5.4-4-4 5.6-.6z"/></svg>
+          <span class="ext">PDF</span>
+        </div>
+        <div class="cert-meta">
+          <div class="ct">Titel des Zertifikats</div>
+          <div class="ci">Aussteller · Jahr</div>
+          <div class="cert-open mono">▸ öffnen</div>
+        </div>
+      </button>
+
+      <!-- ====== ZERTIFIKAT 3 ====== -->
+      <button class="cert fade" data-file="zertifikate/zertifikat-3.pdf" data-title="Zertifikat 3">
+        <div class="cert-thumb">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.4 5 5.6.6-4 4 1 5.4L12 19l-5 3 1-5.4-4-4 5.6-.6z"/></svg>
+          <span class="ext">PDF</span>
+        </div>
+        <div class="cert-meta">
+          <div class="ct">Titel des Zertifikats</div>
+          <div class="ci">Aussteller · Jahr</div>
+          <div class="cert-open mono">▸ öffnen</div>
+        </div>
+      </button>
+
     </div>
+    <p style="color:var(--ink-faint); font-size:13px; margin-top:18px;">
+      Weitere Karten kannst du nach demselben Muster ergänzen — oder nicht benötigte einfach entfernen.
+    </p>
   </div>
 </section>
+
+<!-- Lightbox-Overlay für Zertifikate -->
+<div class="lb" id="lightbox" role="dialog" aria-modal="true" aria-label="Zertifikat-Ansicht">
+  <div class="lb-inner">
+    <div class="lb-bar">
+      <span class="t" id="lbTitle">Zertifikat</span>
+      <button class="x" id="lbClose" aria-label="Schließen">✕</button>
+    </div>
+    <iframe id="lbFrame" title="Zertifikat-Vorschau"></iframe>
+    <div class="lb-fallback">Wird nichts angezeigt? <a id="lbDirect" href="#" target="_blank" rel="noopener">Zertifikat in neuem Tab öffnen</a></div>
+  </div>
+</div>
 
 <!-- ============================ SKILLS ============================ -->
 <section id="cv">
@@ -504,9 +614,8 @@
       <p>Ich freue mich darauf, meine Perspektive als ehemaliger Anwender in Ihr Solution-Advisory-Team einzubringen.</p>
       <a class="btn btn-primary" href="mailto:adrian.umbreit@gmail.com">adrian.umbreit@gmail.com</a>
       <div>
-        <button class="btn btn-ghost" id="revealBtn" style="margin-top:14px;">Weitere Kontaktdaten anzeigen</button>
+        <a class="btn btn-ghost" href="https://linkedin.com/in/adrianumbreit" target="_blank" rel="noopener" style="margin-top:14px;">LinkedIn-Profil</a>
       </div>
-      <div class="reveal-line mono" id="revealLine"></div>
       <p style="font-size:12.5px; margin-top:22px;">Referenzen werden auf Anfrage gerne weitergegeben.</p>
     </div>
   </div>
@@ -526,15 +635,31 @@
   }, { threshold: 0.12 });
   document.querySelectorAll('.fade').forEach(el => io.observe(el));
 
-  // Kontaktdaten erst auf Klick zeigen (Spam-Schutz, leichte Verschleierung)
-  const rb = document.getElementById('revealBtn');
-  const rl = document.getElementById('revealLine');
-  rb.addEventListener('click', () => {
-    const p = ['+971','50','992','xxxx'].join(' ');
-    rl.textContent = 'Tel: ' + p + '  ·  LinkedIn: /in/adrianumbreit';
-    rl.classList.add('shown');
-    rb.style.display = 'none';
+  // Zertifikat-Lightbox
+  const lb = document.getElementById('lightbox');
+  const lbFrame = document.getElementById('lbFrame');
+  const lbTitle = document.getElementById('lbTitle');
+  const lbDirect = document.getElementById('lbDirect');
+  const lbClose = document.getElementById('lbClose');
+
+  function openCert(file, title) {
+    lbFrame.src = file;
+    lbDirect.href = file;
+    lbTitle.textContent = title || 'Zertifikat';
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeCert() {
+    lb.classList.remove('open');
+    lbFrame.src = '';            // Laden stoppen
+    document.body.style.overflow = '';
+  }
+  document.querySelectorAll('.cert').forEach(btn => {
+    btn.addEventListener('click', () => openCert(btn.dataset.file, btn.dataset.title));
   });
+  lbClose.addEventListener('click', closeCert);
+  lb.addEventListener('click', (e) => { if (e.target === lb) closeCert(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lb.classList.contains('open')) closeCert(); });
 </script>
 
 </body>
