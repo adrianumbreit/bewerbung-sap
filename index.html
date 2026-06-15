@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adrian Umbreit — Solution Advisor, SAP Academy for Customer Success</title>
+<meta name="description" content="Bewerbung von Adrian Umbreit für die SAP Academy for Customer Success — Solution Advisor. Von der Anwenderseite zur Beratung.">
+<style>
+  /* ============================================================
+     DESIGN TOKENS
+     Direction: "Discovery Console" — die Seite ist als Mini-Demo
+     eines Solution Advisors gebaut. Dunkle, technische Oberfläche
+     mit präzisem Raster, monospace-Datenlabels und einem einzigen
+     warmen Akzent (Bernstein) als Signatur. Kein SAP-Blau-Klon,
+     aber seriös genug fürs Enterprise-Umfeld.
+     ============================================================ */
+  :root {
+    --bg:        #0d1117;   /* tiefes Anthrazit  */
+    --surface:   #151b24;   /* Kartenfläche      */
+    --surface-2: #1c2530;   /* erhöhte Fläche    */
+    --line:      #28323f;   /* Hairline-Raster   */
+    --ink:       #e8edf2;   /* Primärtext        */
+    --ink-dim:   #9aa7b5;   /* Sekundärtext      */
+    --ink-faint: #5e6b7a;   /* Labels / Captions */
+    --accent:    #f0a500;   /* Bernstein, Signatur */
+    --accent-dim:#7a5600;
+    --good:      #3fb27f;   /* dezentes Grün      */
+    --maxw: 1080px;
+    --r: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* subtiles Hintergrundraster — technische Anmutung */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity: 0.18;
+    z-index: 0;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 80%);
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+  .mono { font-family: "JetBrains Mono", "SF Mono", ui-monospace, "Cascadia Code", monospace; }
+
+  /* ---------- Eyebrow / Labels ---------- */
+  .eyebrow {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 18px; height: 1px;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  /* ============================================================ NAV */
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(12px);
+    background: rgba(13,17,23,0.78);
+    border-bottom: 1px solid var(--line);
+  }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .brand { font-weight: 700; letter-spacing: -0.01em; font-size: 15px; }
+  .brand span { color: var(--accent); }
+  .navlinks { display: flex; gap: 28px; }
+  .navlinks a {
+    color: var(--ink-dim); text-decoration: none; font-size: 14px;
+    transition: color 0.2s;
+  }
+  .navlinks a:hover { color: var(--ink); }
+  @media (max-width: 720px) { .navlinks { display: none; } }
+
+  /* ============================================================ HERO */
+  header { padding: 92px 0 72px; position: relative; }
+  .hero-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; align-items: center; }
+  @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; gap: 32px; } }
+
+  h1 {
+    font-size: clamp(38px, 6vw, 66px);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    font-weight: 800;
+    margin: 20px 0 0;
+  }
+  h1 .line2 { color: var(--ink-dim); font-weight: 300; }
+
+  .lede {
+    font-size: clamp(16px, 1.6vw, 19px);
+    color: var(--ink-dim);
+    max-width: 46ch;
+    margin-top: 22px;
+  }
+  .lede b { color: var(--ink); font-weight: 600; }
+
+  .hero-cta { margin-top: 32px; display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 13px 22px; border-radius: 10px;
+    font-size: 14px; font-weight: 600; text-decoration: none;
+    border: 1px solid transparent; cursor: pointer;
+    transition: transform 0.15s, background 0.2s, border-color 0.2s;
+  }
+  .btn-primary { background: var(--accent); color: #1a1200; }
+  .btn-primary:hover { transform: translateY(-2px); background: #ffb71a; }
+  .btn-ghost { border-color: var(--line); color: var(--ink); background: var(--surface); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Hero-Datenkarte — die "Demo"-Signatur */
+  .console {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    overflow: hidden;
+    box-shadow: 0 24px 60px -30px rgba(0,0,0,0.8);
+  }
+  .console-bar {
+    display: flex; align-items: center; gap: 7px;
+    padding: 12px 16px; border-bottom: 1px solid var(--line);
+    background: var(--surface-2);
+  }
+  .dot { width: 11px; height: 11px; border-radius: 50%; background: var(--line); }
+  .console-bar .label { margin-left: 10px; font-size: 12px; color: var(--ink-faint); }
+  .console-body { padding: 20px; }
+  .kv { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px dashed var(--line); font-size: 13px; }
+  .kv:last-child { border-bottom: none; }
+  .kv .k { color: var(--ink-faint); }
+  .kv .v { color: var(--ink); font-weight: 600; }
+  .kv .v.amber { color: var(--accent); }
+  .kv .v.green { color: var(--good); }
+
+  /* ============================================================ SECTION SHELL */
+  section { padding: 64px 0; border-top: 1px solid var(--line); }
+  .sec-head { margin-bottom: 40px; }
+  .sec-head h2 {
+    font-size: clamp(26px, 3.4vw, 38px); letter-spacing: -0.02em;
+    font-weight: 700; margin-top: 14px; line-height: 1.1;
+  }
+  .sec-head p { color: var(--ink-dim); margin-top: 12px; max-width: 60ch; }
+
+  /* ============================================================ BRIDGE (3 Säulen) */
+  .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  @media (max-width: 800px) { .pillars { grid-template-columns: 1fr; } }
+  .pillar {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--r); padding: 26px 24px;
+    transition: border-color 0.25s, transform 0.25s;
+  }
+  .pillar:hover { border-color: var(--accent-dim); transform: translateY(-3px); }
+  .pillar .num { font-family: "JetBrains Mono", monospace; font-size: 13px; color: var(--accent); }
+  .pillar h3 { font-size: 18px; margin: 12px 0 8px; letter-spacing: -0.01em; }
+  .pillar p { color: var(--ink-dim); font-size: 14.5px; }
+
+  /* ============================================================ MAPPING TABLE */
+  .map { border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+  .map-row { display: grid; grid-template-columns: 1fr 1.3fr; }
+  .map-row:not(:last-child) { border-bottom: 1px solid var(--line); }
+  .map-cell { padding: 18px 22px; }
+  .map-cell.req {
+    background: var(--surface-2); border-right: 1px solid var(--line);
+    font-weight: 600; font-size: 14.5px; display: flex; align-items: center; gap: 10px;
+  }
+  .map-cell.req .tick { color: var(--good); font-family: monospace; }
+  .map-cell.proof { color: var(--ink-dim); font-size: 14.5px; background: var(--surface); }
+  @media (max-width: 720px) {
+    .map-row { grid-template-columns: 1fr; }
+    .map-cell.req { border-right: none; border-bottom: 1px dashed var(--line); }
+  }
+
+  /* ============================================================ TIMELINE */
+  .timeline { position: relative; margin-left: 8px; }
+  .tl-item { position: relative; padding: 0 0 30px 30px; border-left: 1px solid var(--line); }
+  .tl-item:last-child { border-left-color: transparent; padding-bottom: 0; }
+  .tl-item::before {
+    content: ""; position: absolute; left: -6px; top: 4px;
+    width: 11px; height: 11px; border-radius: 50%;
+    background: var(--bg); border: 2px solid var(--accent);
+  }
+  .tl-item.now::before { background: var(--accent); box-shadow: 0 0 0 4px rgba(240,165,0,0.15); }
+  .tl-date { font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--accent); letter-spacing: 0.04em; }
+  .tl-role { font-weight: 600; font-size: 16px; margin: 4px 0 2px; }
+  .tl-org { color: var(--ink-faint); font-size: 13px; margin-bottom: 8px; }
+  .tl-item ul { list-style: none; }
+  .tl-item li { color: var(--ink-dim); font-size: 14px; padding-left: 16px; position: relative; margin-bottom: 4px; }
+  .tl-item li::before { content: "—"; position: absolute; left: 0; color: var(--ink-faint); }
+
+  /* ============================================================ AI PLACEHOLDER */
+  .placeholder {
+    border: 1px dashed var(--accent-dim);
+    background: linear-gradient(180deg, rgba(240,165,0,0.05), transparent);
+    border-radius: var(--r); padding: 28px;
+  }
+  .placeholder .tag {
+    font-family: "JetBrains Mono", monospace; font-size: 12px;
+    color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .placeholder h3 { margin: 10px 0; font-size: 19px; }
+  .placeholder p { color: var(--ink-dim); font-size: 14.5px; max-width: 64ch; }
+  .placeholder ul { margin: 14px 0 0 18px; color: var(--ink-dim); font-size: 14px; }
+  .placeholder li { margin-bottom: 6px; }
+
+  /* ============================================================ SKILLS */
+  .skill-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  @media (max-width: 700px) { .skill-grid { grid-template-columns: 1fr; } }
+  .skill-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 22px; }
+  .skill-card h4 { font-family: "JetBrains Mono", monospace; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 14px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font-size: 13px; padding: 6px 12px; border-radius: 7px;
+    background: var(--surface-2); border: 1px solid var(--line); color: var(--ink);
+  }
+  .chip.lang { border-color: var(--accent-dim); }
+
+  /* ============================================================ CONTACT */
+  .contact-box {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--r);
+    padding: 38px; text-align: center;
+  }
+  .contact-box h2 { font-size: clamp(24px,3vw,32px); letter-spacing: -0.02em; }
+  .contact-box p { color: var(--ink-dim); margin: 12px auto 26px; max-width: 48ch; }
+  .reveal-line { margin-top: 18px; font-size: 13px; color: var(--ink-faint); min-height: 20px; }
+  .reveal-line.shown { color: var(--ink); }
+
+  footer { padding: 40px 0 60px; text-align: center; color: var(--ink-faint); font-size: 12.5px; }
+  footer .mono { color: var(--ink-faint); }
+
+  /* reveal-on-scroll */
+  .fade { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade.in { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+    .fade { opacity: 1; transform: none; }
+  }
+
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">Adrian <span>Umbreit</span></div>
+    <div class="navlinks">
+      <a href="#bruecke">Warum SAP</a>
+      <a href="#mapping">Eignung</a>
+      <a href="#weg">Werdegang</a>
+      <a href="#ki">KI-Praxis</a>
+      <a href="#kontakt">Kontakt</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow">Bewerbung · SAP Academy for Customer Success</span>
+        <h1>Von der Anwenderseite<br><span class="line2">in die Beratung.</span></h1>
+        <p class="lede">Ich habe Geschäftsprozesse bei Porsche nicht aus der Theorie kennengelernt, sondern täglich gesteuert, gemessen und verbessert — <b>genau die Prozesse, die SAP digitalisiert.</b> Als Solution Advisor will ich diese Perspektive auf die andere Seite des Tisches bringen.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#mapping">Warum ich passe →</a>
+          <a class="btn btn-ghost" href="#cv" id="cvBtn">Lebenslauf ansehen</a>
+        </div>
+      </div>
+      <div class="console fade">
+        <div class="console-bar">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span class="label mono">candidate_profile.json</span>
+        </div>
+        <div class="console-body">
+          <div class="kv"><span class="k mono">Zielrolle</span><span class="v amber">Solution Advisor</span></div>
+          <div class="kv"><span class="k mono">Studium</span><span class="v">Wirtschaftschemie M.Sc.</span></div>
+          <div class="kv"><span class="k mono">Hintergrund</span><span class="v">Aftersales · Market Dev.</span></div>
+          <div class="kv"><span class="k mono">IT-Kenntnisse</span><span class="v">Power BI · SQL · Python</span></div>
+          <div class="kv"><span class="k mono">Sprachen</span><span class="v">DE (native) · EN (C1)</span></div>
+          <div class="kv"><span class="k mono">Status</span><span class="v green">● verfügbar ab 10/2026</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============================ BRÜCKE ============================ -->
+<section id="bruecke">
+  <div class="wrap">
+    <div class="sec-head fade">
+      <span class="eyebrow">Der Perspektivwechsel</span>
+      <h2>Kein Branchenwechsel. Ein Seitenwechsel.</h2>
+      <p>Ich wechsle nicht von der Industrie in die IT — ich wechsle die Perspektive auf dasselbe Problem. Drei Gründe, warum das für einen Solution Advisor ein Vorteil ist.</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar fade">
+        <div class="num mono">01</div>
+        <h3>Ich war der Kunde</h3>
+        <p>Bei Porsche habe ich mit Reportings, KPIs und Prozessen gearbeitet, die Enterprise-Software abbildet. Ich kenne aus eigener Erfahrung, wo es im Alltag hakt — und kann diese Schmerzpunkte in Discovery-Sessions schneller erkennen.</p>
+      </div>
+      <div class="pillar fade">
+        <div class="num mono">02</div>
+        <h3>Es ist Beratung, kein Code</h3>
+        <p>Die Rolle lebt von Discovery, Executive-Präsentationen und Demos. Pitching auf Führungsebene und Reportings für 16 Märkte gehören längst zu meinem Alltag — dieselben Kernfähigkeiten, neuer Kontext.</p>
+      </div>
+      <div class="pillar fade">
+        <div class="num mono">03</div>
+        <h3>Datengetrieben ist mein Standard</h3>
+        <p>Power BI, SQL, Python, KI-Tools — ich arbeite bereits datenbasiert. KI ist die Technologie, die Industrie und Software verschmilzt. Der Schritt zu SAP ist die konsequente Vertiefung, kein Bruch.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ MAPPING ============================ -->
+<section id="mapping">
+  <div class="wrap">
+    <div class="sec-head fade">
+      <span class="eyebrow">Anforderung → Beleg</span>
+      <h2>Was die Stelle verlangt, habe ich gemacht.</h2>
+      <p>Die Anforderungen der Ausschreibung, jeweils mit einem konkreten Beleg aus meiner Praxis.</p>
+    </div>
+    <div class="map fade">
+      <div class="map-row">
+        <div class="map-cell req"><span class="tick">✓</span>Technische & geschäftliche Prozesse</div>
+        <div class="map-cell proof">Aftersales-Spareparts-Prozess via Erfüllungsgrad-Reporting messbar gemacht; Aktionsmanagement-Workflows end-to-end gesteuert.</div>
+      </div>
+      <div class="map-row">
+        <div class="map-cell req"><span class="tick">✓</span>Relevante Technologien & Tools</div>
+        <div class="map-cell proof">KPI- und Reportingaufbau mit Power BI, SQL, Python — zur Steigerung operativer Effizienz.</div>
+      </div>
+      <div class="map-row">
+        <div class="map-cell req"><span class="tick">✓</span>Executive-Präsentation & Discovery</div>
+        <div class="map-cell proof">Leadership-Präsentationen für 16 regionale Märkte; eigenständiges Marktanalyse-Projekt zur Identifikation von Wachstumspotenzialen.</div>
+      </div>
+      <div class="map-row">
+        <div class="map-cell req"><span class="tick">✓</span>Business Acumen & Branchenwissen</div>
+        <div class="map-cell proof">M.Sc. Wirtschaftschemie mit Schwerpunkt Unternehmensführung & Controlling, kombiniert mit Automotive-Aftersales-Praxis.</div>
+      </div>
+      <div class="map-row">
+        <div class="map-cell req"><span class="tick">✓</span>Deutsch & Englisch (C1)</div>
+        <div class="map-cell proof">Deutsch Muttersprache, Englisch C1 verhandlungssicher — plus Auslandsjahr USA.</div>
+      </div>
+      <div class="map-row">
+        <div class="map-cell req"><span class="tick">✓</span>Kulturelles Bewusstsein & Eigeninitiative</div>
+        <div class="map-cell proof">Stationen in Dubai, Stuttgart und im indischen Markt; durchgängig eigenverantwortliche Projektsteuerung.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ WERDEGANG ============================ -->
+<section id="weg">
+  <div class="wrap">
+    <div class="sec-head fade">
+      <span class="eyebrow">Werdegang</span>
+      <h2>Vier Stationen, ein roter Faden.</h2>
+      <p>Aftersales, Qualität, Market Development — durchgehend an der Schnittstelle von Prozess und Daten.</p>
+    </div>
+    <div class="timeline">
+      <div class="tl-item now fade">
+        <div class="tl-date mono">MÄR 2026 — HEUTE</div>
+        <div class="tl-role">Praktikant Market Development India</div>
+        <div class="tl-org">Porsche Middle East &amp; Africa FZE — Dubai</div>
+        <ul>
+          <li>Eigenständige Leitung eines strategischen Marktanalyse-Projekts zu Wachstumspotenzialen und Netzwerkkapazitäten</li>
+          <li>Schnittstellenmanagement mit Porsche India zur Unterstützung der Abteilungsleitung</li>
+        </ul>
+      </div>
+      <div class="tl-item fade">
+        <div class="tl-date mono">SEP 2025 — FEB 2026</div>
+        <div class="tl-role">Praktikant Aftersales Business Development</div>
+        <div class="tl-org">Porsche Middle East &amp; Africa FZE — Dubai</div>
+        <ul>
+          <li>Operative Reportings und Leadership-Präsentationen für 16 regionale Märkte</li>
+          <li>Eigenverantwortliche Steuerung zweier Projekte zur Absatzsteigerung</li>
+        </ul>
+      </div>
+      <div class="tl-item fade">
+        <div class="tl-date mono">OKT 2024 — AUG 2025</div>
+        <div class="tl-role">Werkstudent Internationales Qualitätsmanagement</div>
+        <div class="tl-org">Dr. Ing. h.c. F. Porsche AG — Stuttgart</div>
+        <ul>
+          <li>Vor- und Nachbereitung von Gremien, Management-Meetings und Teamworkshops</li>
+          <li>Koordination externer Dienstleister im Aktionsmanagement</li>
+        </ul>
+      </div>
+      <div class="tl-item fade">
+        <div class="tl-date mono">FEB 2024 — AUG 2024</div>
+        <div class="tl-role">Praktikant Aftersales Händlerbetreuung Technik</div>
+        <div class="tl-org">Porsche Deutschland GmbH — Bietigheim-Bissingen</div>
+        <ul>
+          <li>Bearbeitung von Händleranfragen mit hoher Service- und Kundenorientierung</li>
+          <li>Aufbau eines Teileverfügbarkeits- und Erfüllungsgradreportings</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ KI-PRAXIS (PLATZHALTER) ============================ -->
+<section id="ki">
+  <div class="wrap">
+    <div class="sec-head fade">
+      <span class="eyebrow">KI in der Praxis</span>
+      <h2>Geschäftsprobleme, die ich mit KI gelöst habe.</h2>
+      <p>Die Ausschreibung legt besonderen Wert auf KI-Anwendung. Hier zeige ich konkret, wofür ich generative KI im Arbeitsalltag eingesetzt habe.</p>
+    </div>
+    <div class="placeholder fade">
+      <span class="tag">▌ Von Adrian zu füllen</span>
+      <h3>Deine echten KI-Anwendungsfälle bei Porsche</h3>
+      <p>Trag hier 2–3 konkrete Beispiele ein, bei denen du KI eingesetzt hast — je spezifischer, desto glaubwürdiger im Interview. Orientierung:</p>
+      <ul>
+        <li>Welches Problem gab es? (z.&nbsp;B. manuelle, fehleranfällige Reporting-Schritte)</li>
+        <li>Welches KI-Tool / welchen Ansatz hast du genutzt?</li>
+        <li>Was war das messbare Ergebnis? (Zeitersparnis, Qualität, schnellere Analyse)</li>
+      </ul>
+      <p style="margin-top:14px;">→ Gib mir diese Stichpunkte, dann formuliere ich sie passend zur SAP-Sprache aus (AI Adoption Mindset, Agentic AI, Context Engineering).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ SKILLS ============================ -->
+<section id="cv">
+  <div class="wrap">
+    <div class="sec-head fade">
+      <span class="eyebrow">Profil &amp; Skills</span>
+      <h2>Werkzeugkasten.</h2>
+    </div>
+    <div class="skill-grid">
+      <div class="skill-card fade">
+        <h4>Fachlich</h4>
+        <div class="chips">
+          <span class="chip">Markt- &amp; Wettbewerbsanalyse</span>
+          <span class="chip">Schnittstellenmanagement</span>
+          <span class="chip">KPI- &amp; Reportingaufbau</span>
+          <span class="chip">Pitching auf Führungsebene</span>
+          <span class="chip">Projektsteuerung</span>
+        </div>
+      </div>
+      <div class="skill-card fade">
+        <h4>Technologie</h4>
+        <div class="chips">
+          <span class="chip">Power BI</span>
+          <span class="chip">SQL</span>
+          <span class="chip">Python (Basics)</span>
+          <span class="chip">Generative KI</span>
+          <span class="chip">MS Office (fortgeschr.)</span>
+        </div>
+      </div>
+      <div class="skill-card fade">
+        <h4>Sprachen</h4>
+        <div class="chips">
+          <span class="chip lang">Deutsch — Muttersprache</span>
+          <span class="chip lang">Englisch — C1</span>
+          <span class="chip">Latein — Latinum</span>
+          <span class="chip">Spanisch — A2</span>
+        </div>
+      </div>
+      <div class="skill-card fade">
+        <h4>Ausbildung</h4>
+        <div class="chips">
+          <span class="chip">M.Sc. Wirtschaftschemie — Uni Ulm</span>
+          <span class="chip">B.Sc. Wirtschaftschemie (2,0)</span>
+          <span class="chip">Abitur 1,1 — Goethegymnasium Weimar</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ KONTAKT ============================ -->
+<section id="kontakt">
+  <div class="wrap">
+    <div class="contact-box fade">
+      <span class="eyebrow" style="justify-content:center;">Kontakt</span>
+      <h2>Lassen Sie uns sprechen.</h2>
+      <p>Ich freue mich darauf, meine Perspektive als ehemaliger Anwender in Ihr Solution-Advisory-Team einzubringen.</p>
+      <a class="btn btn-primary" href="mailto:adrian.umbreit@gmail.com">adrian.umbreit@gmail.com</a>
+      <div>
+        <button class="btn btn-ghost" id="revealBtn" style="margin-top:14px;">Weitere Kontaktdaten anzeigen</button>
+      </div>
+      <div class="reveal-line mono" id="revealLine"></div>
+      <p style="font-size:12.5px; margin-top:22px;">Referenzen werden auf Anfrage gerne weitergegeben.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="mono">adrian_umbreit · bewerbung · sap_academy_2026</div>
+    <div style="margin-top:6px;">Erstellt als persönliche Bewerbungsseite. Kein offizielles SAP-Dokument.</div>
+  </div>
+</footer>
+
+<script>
+  // reveal-on-scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade').forEach(el => io.observe(el));
+
+  // Kontaktdaten erst auf Klick zeigen (Spam-Schutz, leichte Verschleierung)
+  const rb = document.getElementById('revealBtn');
+  const rl = document.getElementById('revealLine');
+  rb.addEventListener('click', () => {
+    const p = ['+971','50','992','xxxx'].join(' ');
+    rl.textContent = 'Tel: ' + p + '  ·  LinkedIn: /in/adrianumbreit';
+    rl.classList.add('shown');
+    rb.style.display = 'none';
+  });
+</script>
+
+</body>
+</html>
